@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitmoo-goog
+  labels:
+    app: google-photos-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: google-photos-pipeline
+  template:
+    metadata:
+      labels:
+        app: google-photos-pipeline
+    spec:
+      containers:
+      - name: gitmoo-goog
+        image: ahevenor/gitmoo-goog:latest
+        args:
+        - "-folder"
+        - "/data" # Path for downloads
+        - "-logfile"
+        - "/data/gitmoo.log" # Log file
+        - "-use-file-name"
+        - "-include-exif"
+        - "-loop"
+        - "-throttle"
+        - "45" # API call throttle
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/app/credentials.json" # Path to credentials
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /data # Path inside container for downloads
+        - name: credentials
+          mountPath: /app/credentials.json
+          subPath: credentials.json
+        - name: credentials
+          mountPath: /app/token.json
+          subPath: token.json
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-volume-many # Existing PVC for shared storage
+      - name: credentials
+        configMap:
+          name: google-photos-credentials # ConfigMap containing credentials.json and token.json

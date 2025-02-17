@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prism-search
+  labels:
+    app: prism-search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prism-search
+  template:
+    metadata:
+      labels:
+        app: prism-search
+    spec:
+      containers:
+      - name: prism-search
+        image: aerospike/prism-search-example:3.0.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AVS_HOST
+          value: "34.118.228.47"
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /prism/static/images/data # Path inside the container
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-volume
