@@ -1,4 +1,4 @@
-# KubePrism
+# prismkube
 Combines Aerospike Vector Search and a [data pipeline for your google photos](https://github.com/dtylman/gitmoo-goog). 
 Use these config files and instructions to deploy and host your own hosted
 photo search solution.
